@@ -1,0 +1,34 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Env files
+.env
+
+# React Native
+.expo/
+ios/Pods/
+android/.gradle/
+android/build/
+
+# Build
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+
+# Metro / React Native cache
+.metro-health-check*
