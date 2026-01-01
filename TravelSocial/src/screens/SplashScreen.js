@@ -1,69 +1,117 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
-
-const { width } = Dimensions.get('window');
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  StatusBar,
+  Image,
+} from 'react-native';
 
 export default function SplashScreen({ navigation }) {
-  const scale = useRef(new Animated.Value(0.7)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.92)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.parallel([
-      Animated.spring(scale, {
+      Animated.spring(scaleAnim, {
         toValue: 1,
-        useNativeDriver: true,
-        friction: 4,
+        friction: 5,
+        tension: 60,
+        useNativeDriver: true, // ✅ safe
       }),
-      Animated.timing(opacity, {
+      Animated.timing(opacityAnim, {
         toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
+        duration: 1000,
+        useNativeDriver: true, // ✅ safe
       }),
     ]).start();
 
-    const timer = setTimeout(() => navigation.replace('Login'), 1500);
+    const timer = setTimeout(() => {
+      navigation.replace('Login');
+    }, 2400);
+
     return () => clearTimeout(timer);
-  }, [navigation, opacity, scale]);
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Animated.View style={{ transform: [{ scale }], opacity }}>
-        <Text style={styles.logo}>TravelSocial</Text>
+      <StatusBar hidden />
+
+      <Animated.View
+        style={[
+          styles.content,
+          {
+            transform: [{ scale: scaleAnim }],
+            opacity: opacityAnim,
+          },
+        ]}
+      >
+        {/* LOGO IMAGE */}
+        <Image
+          source={require('../assets/mylogo.jpeg')} // 👈 apna logo
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
+        {/* PREMIUM BRAND TEXT */}
+        <Text style={styles.brandPrimary}>TRAVEL</Text>
+        <Text style={styles.brandSecondary}>SOCIAL</Text>
+
+        {/* TAGLINE */}
+        <Text style={styles.tagline}>
+          EXPLORE  •  CONNECT  •  LIVE
+        </Text>
       </Animated.View>
-      <Animated.Text style={[styles.subtitle, { opacity }]}>
-        Travel • Social • Booking
-      </Animated.Text>
-      <View style={[styles.circle, styles.circleOne]} />
-      <View style={[styles.circle, styles.circleTwo]} />
     </View>
   );
 }
-
-const circleSize = width * 0.9;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#000000',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  logo: { fontSize: 32, fontWeight: 'bold', color: 'white' },
-  subtitle: { marginTop: 8, color: '#9CA3AF' },
-  circle: {
-    position: 'absolute',
-    borderRadius: circleSize / 2,
-    width: circleSize,
-    height: circleSize,
-    borderWidth: 1,
-    borderColor: '#1F2937',
+
+  content: {
+    alignItems: 'center',
+
+    // static glow (safe)
+    shadowColor: '#00AAFF',
+    shadowOpacity: 0.35,
+    shadowRadius: 40,
+    elevation: 25,
   },
-  circleOne: {
-    top: -circleSize * 0.2,
-    right: -circleSize * 0.3,
+
+  logo: {
+    width: 170,
+    height: 170,
+    marginBottom: 28,
   },
-  circleTwo: {
-    bottom: -circleSize * 0.3,
-    left: -circleSize * 0.4,
+
+  brandPrimary: {
+    fontSize: 42,
+    fontWeight: '800',
+    letterSpacing: 6,
+    color: '#FFFFFF',
+    textTransform: 'uppercase',
+  },
+
+  brandSecondary: {
+    fontSize: 42,
+    fontWeight: '300',      // 🔥 luxury contrast
+    letterSpacing: 10,
+    color: '#FF005C',       // premium accent
+    textTransform: 'uppercase',
+    marginTop: -8,
+  },
+
+  tagline: {
+    marginTop: 18,
+    fontSize: 11,
+    letterSpacing: 4,
+    color: '#9CA3AF',
+    opacity: 0.9,
   },
 });

@@ -1,32 +1,322 @@
-import React, { useState } from 'react';
+// import React, { useState } from "react";
+// import {
+//   View,
+//   Text,
+//   TextInput,
+//   TouchableOpacity,
+//   StyleSheet,
+//   Alert,
+// } from "react-native";
+
+// import Icon from "react-native-vector-icons/Ionicons";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+// import { API_BASE_URL } from "../config/api";
+
+// import { colors } from '../theme/colors';
+
+
+// export default function LoginScreen({ navigation }) {
+//   const [mobile, setMobile] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [secure, setSecure] = useState(true);
+//   const [loading, setLoading] = useState(false);
+
+//   const handleLogin = async () => {
+//     if (!mobile || !password) {
+//       return Alert.alert("Error", "All fields are required");
+//     }
+
+//     try {
+//       setLoading(true);
+
+//       const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ mobile, password }),
+//       });
+
+//       const data = await res.json();
+//       setLoading(false);
+
+//       if (!res.ok) {
+//         return Alert.alert("Login Failed", data.msg || "Invalid credentials");
+//       }
+
+//       // Save auth
+//       await AsyncStorage.setItem("token", data.token);
+//       await AsyncStorage.setItem("user", JSON.stringify(data.user));
+
+//       Alert.alert("Success", "Login successful");
+//       navigation.replace("MainTabs");
+
+//     } catch (error) {
+//       setLoading(false);
+//       Alert.alert("Error", "Cannot connect to server");
+//     }
+//   };
+
+//   // return (
+//   //   <View style={styles.container}>
+//   //     <View style={styles.card}>
+//   //       <Text style={styles.title}>Welcome Back 👋</Text>
+
+//   //       {/* MOBILE */}
+//   //       <View style={styles.inputWrapper}>
+//   //         <Icon name="call-outline" size={20} color="#9CA3AF" />
+//   //         <TextInput
+//   //           placeholder="Mobile Number"
+//   //           placeholderTextColor="#9CA3AF"
+//   //           style={styles.input}
+//   //           keyboardType="phone-pad"
+//   //           maxLength={10}
+//   //           value={mobile}
+//   //           onChangeText={setMobile}
+//   //         />
+//   //       </View>
+
+//   //       {/* PASSWORD */}
+//   //       <View style={styles.inputWrapper}>
+//   //         <Icon name="lock-closed-outline" size={20} color="#9CA3AF" />
+//   //         <TextInput
+//   //           placeholder="Password"
+//   //           placeholderTextColor="#9CA3AF"
+//   //           style={styles.input}
+//   //           secureTextEntry={secure}
+//   //           value={password}
+//   //           onChangeText={setPassword}
+//   //         />
+//   //         <TouchableOpacity onPress={() => setSecure(!secure)}>
+//   //           <Icon
+//   //             name={secure ? "eye-outline" : "eye-off-outline"}
+//   //             size={18}
+//   //             color="#9CA3AF"
+//   //           />
+//   //         </TouchableOpacity>
+//   //       </View>
+
+//   //       {/* FORGOT */}
+//   //       <TouchableOpacity style={styles.forgot}>
+//   //         <Text style={styles.forgotText}>Forgot Password?</Text>
+//   //       </TouchableOpacity>
+
+//   //       {/* LOGIN BUTTON */}
+//   //       <TouchableOpacity
+//   //         style={styles.button}
+//   //         onPress={handleLogin}
+//   //         disabled={loading}
+//   //       >
+//   //         <Text style={styles.buttonText}>
+//   //           {loading ? "Logging in..." : "Login"}
+//   //         </Text>
+//   //       </TouchableOpacity>
+
+//   //       {/* SIGNUP */}
+//   //       <Text style={styles.footer}>
+//   //         Don’t have an account?{" "}
+//   //         <Text
+//   //           style={styles.link}
+//   //           onPress={() => navigation.navigate("Signup")}
+//   //         >
+//   //           Sign up
+//   //         </Text>
+//   //       </Text>
+//   //     </View>
+//   //   </View>
+//   // );
+//   return (
+//     <View style={styles.container}>
+//       <View style={styles.card}>
+//         <Text style={styles.title}>Hello,</Text>
+//         <Text style={styles.subtitle}>Welcome Back</Text>
+
+//         {/* MOBILE */}
+//         <View style={styles.inputWrapper}>
+//           <Icon name="call-outline" size={20} color={colors.muted} />
+//           <TextInput
+//             placeholder="Mobile number"
+//             placeholderTextColor={colors.muted}
+//             style={styles.input}
+//             keyboardType="phone-pad"
+//             maxLength={10}
+//             value={mobile}
+//             onChangeText={setMobile}
+//           />
+//         </View>
+
+//         {/* PASSWORD */}
+//         <View style={styles.inputWrapper}>
+//           <Icon name="lock-closed-outline" size={20} color={colors.muted} />
+//           <TextInput
+//             placeholder="Password"
+//             placeholderTextColor={colors.muted}
+//             style={styles.input}
+//             secureTextEntry={secure}
+//             value={password}
+//             onChangeText={setPassword}
+//           />
+
+//           {/* login button */}
+//           <TouchableOpacity
+//             style={styles.button}
+//             onPress={handleLogin}
+//             disabled={loading}
+//           >
+//             <Icon
+//               name={secure ? 'eye-outline' : 'eye-off-outline'}
+//               size={18}
+//               color={colors.muted}
+//             />
+//           </TouchableOpacity>
+//         </View>
+
+
+
+
+
+//         <TouchableOpacity>
+//           <Text style={styles.forgot}>Forgot password?</Text>
+//         </TouchableOpacity>
+
+//         <TouchableOpacity
+//           style={styles.button}
+//           onPress={() => navigation.navigate('MainTabs')}
+//         >
+//           <Text style={styles.buttonText}>Login</Text>
+//         </TouchableOpacity>
+
+//         <Text style={styles.footer}>
+//           Don’t have an account?{' '}
+//           <Text
+//             style={styles.link}
+//             onPress={() => navigation.navigate('Signup')}
+//           >
+//             Sign up
+//           </Text>
+//         </Text>
+//       </View>
+//     </View>
+//   );
+// }
+
+
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: colors.bg,
+//     justifyContent: 'center',
+//     padding: 20,
+//   },
+
+//   card: {
+//     backgroundColor: colors.card,
+//     borderRadius: 24,
+//     padding: 24,
+//     shadowColor: colors.primaryPink,
+//     shadowOpacity: 0.4,
+//     shadowRadius: 30,
+//     elevation: 20,
+//   },
+
+//   title: {
+//     color: colors.text,
+//     fontSize: 26,
+//     fontWeight: '700',
+//   },
+
+//   subtitle: {
+//     color: colors.text,
+//     fontSize: 22,
+//     fontWeight: '700',
+//     marginBottom: 20,
+//   },
+
+//   inputWrapper: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     borderWidth: 1,
+//     borderColor: colors.border,
+//     borderRadius: 14,
+//     paddingHorizontal: 12,
+//     marginBottom: 14,
+//     backgroundColor: '#000',
+//   },
+
+//   input: {
+//     flex: 1,
+//     paddingVertical: 14,
+//     paddingHorizontal: 10,
+//     color: colors.text,
+//     fontSize: 15,
+//   },
+
+//   forgot: {
+//     color: colors.muted,
+//     textAlign: 'right',
+//     marginBottom: 20,
+//   },
+
+//   button: {
+//     backgroundColor: colors.button,
+//     padding: 16,
+//     borderRadius: 14,
+//     marginTop: 10,
+//   },
+
+//   buttonText: {
+//     color: '#000',
+//     fontWeight: '700',
+//     textAlign: 'center',
+//     fontSize: 16,
+//   },
+
+//   footer: {
+//     color: colors.muted,
+//     textAlign: 'center',
+//     marginTop: 20,
+//   },
+
+//   link: {
+//     color: colors.primaryPink,
+//     fontWeight: '600',
+//   },
+// });
+
+
+
+
+
+
+import React, { useState } from "react";
 import {
   View,
   Text,
+  TextInput,
+  TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Pressable,
-  Alert
-} from 'react-native';
-import AppInput from '../components/AppInput';
-import AppButton from '../components/AppButton';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+  Alert,
+} from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_BASE_URL } from "../config/api";
+import { colors } from "../theme/colors";
 
 export default function LoginScreen({ navigation }) {
-
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
+  const [secure, setSecure] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!mobile || !password) {
-      return Alert.alert("Error", "Please fill all fields");
+      return Alert.alert("Error", "All fields are required");
     }
 
     try {
+      setLoading(true);
+
       const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -34,80 +324,173 @@ export default function LoginScreen({ navigation }) {
       });
 
       const data = await res.json();
-      console.log("LOGIN RESPONSE:", data);
+      setLoading(false);
 
-      if (res.status === 200) {
-        await AsyncStorage.setItem("token", data.token);
-        await AsyncStorage.setItem("user", JSON.stringify(data.user));
-
-        Alert.alert("Success", "Login successful!");
-        navigation.replace("MainTabs");
-      } else {
-        Alert.alert("Login Failed", data.msg || "Invalid credentials");
+      if (!res.ok) {
+        return Alert.alert("Login Failed", data.msg || "Invalid credentials");
       }
 
+      await AsyncStorage.setItem("token", data.token);
+      await AsyncStorage.setItem("user", JSON.stringify(data.user));
+
+      Alert.alert("Success", "Login successful");
+      navigation.replace("MainTabs");
+
     } catch (error) {
-      Alert.alert("Error", "Cannot connect to server!!!!!");
+      setLoading(false);
+      Alert.alert("Error", "Cannot connect to server");
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: '#F3F4F6' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+    <View style={styles.container}>
+      <View style={styles.card}>
+        <Text style={styles.title}>Hello,</Text>
+        <Text style={styles.subtitle}>Welcome Back</Text>
 
-        <Text style={styles.title}>Welcome back 👋</Text>
-        <Text style={styles.subtitle}>Login to continue your journey</Text>
+        {/* MOBILE */}
+        <View style={styles.inputWrapper}>
+          <Icon name="call-outline" size={20} color={colors.muted} />
+          <TextInput
+            placeholder="Mobile number"
+            placeholderTextColor={colors.muted}
+            style={styles.input}
+            keyboardType="phone-pad"
+            maxLength={10}
+            value={mobile}
+            onChangeText={setMobile}
+          />
+        </View>
 
-        {/* Mobile Number */}
-        <AppInput
-          color="#000"
+        {/* PASSWORD */}
+        <View style={styles.inputWrapper}>
+          <Icon name="lock-closed-outline" size={20} color={colors.muted} />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor={colors.muted}
+            style={styles.input}
+            secureTextEntry={secure}
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity onPress={() => setSecure(!secure)}>
+            <Icon
+              name={secure ? "eye-outline" : "eye-off-outline"}
+              size={18}
+              color={colors.muted}
+            />
+          </TouchableOpacity>
+        </View>
 
-          placeholder="Mobile Number"
-          keyboardType="phone-pad"
-          maxLength={10}
-          value={mobile}
-          onChangeText={setMobile}
-          icon={<Ionicons name="call-outline" size={20} color="#6B7280" />}
-        />
+        {/* FORGOT */}
+        <TouchableOpacity>
+          <Text style={styles.forgot}>Forgot password?</Text>
+        </TouchableOpacity>
 
-        {/* Password */}
-        <AppInput
-          color="#000"
+        {/* LOGIN BUTTON */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "Logging in..." : "Login"}
+          </Text>
+        </TouchableOpacity>
 
-          placeholder="Password"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-          icon={<Ionicons name="lock-closed-outline" size={20} color="#6B7280" />}
-        />
-
-        {/* Forgot Password */}
-        <Pressable style={styles.forgotContainer} onPress={() => navigation.navigate("ForgotPassword")}>
-          <Text style={styles.forgotText}>Forgot Password?</Text>
-        </Pressable>
-
-        {/* Login Button */}
-        <AppButton title="Login" onPress={handleLogin} />
-
-        {/* Signup Link */}
-        <Text style={styles.link} onPress={() => navigation.navigate('Signup')}>
-          Don’t have an account? Sign up
+        {/* SIGNUP */}
+        <Text style={styles.footer}>
+          Don’t have an account?{" "}
+          <Text
+            style={styles.link}
+            onPress={() => navigation.navigate("Signup")}
+          >
+            Sign up
+          </Text>
         </Text>
-
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </View>
+    </View>
   );
 }
 
-
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: 20, paddingTop: 80 },
-  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 4 },
-  subtitle: { fontSize: 14, color: '#6B7280', marginBottom: 24 },
-  forgotContainer: { width: '100%', alignItems: 'flex-end', marginVertical: 6 },
-  forgotText: { color: '#2563EB', fontSize: 14, fontWeight: '600' },
-  link: { textAlign: 'center', color: '#2563EB', marginTop: 18, fontWeight: '500' },
+  container: {
+    flex: 1,
+    backgroundColor: colors.bg,
+    justifyContent: "center",
+    padding: 20,
+  },
+
+  card: {
+    backgroundColor: colors.card,
+    borderRadius: 24,
+    padding: 24,
+    shadowColor: colors.primaryPink,
+    shadowOpacity: 0.4,
+    shadowRadius: 30,
+    elevation: 20,
+  },
+
+  title: {
+    color: colors.text,
+    fontSize: 26,
+    fontWeight: "700",
+  },
+
+  subtitle: {
+    color: colors.text,
+    fontSize: 22,
+    fontWeight: "700",
+    marginBottom: 20,
+  },
+
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    marginBottom: 14,
+    backgroundColor: "#000",
+  },
+
+  input: {
+    flex: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    color: colors.text,
+    fontSize: 15,
+  },
+
+  forgot: {
+    color: colors.muted,
+    textAlign: "right",
+    marginBottom: 20,
+  },
+
+  button: {
+    backgroundColor: colors.button,
+    padding: 16,
+    borderRadius: 14,
+    marginTop: 10,
+  },
+
+  buttonText: {
+    color: "#000",
+    fontWeight: "700",
+    textAlign: "center",
+    fontSize: 16,
+  },
+
+  footer: {
+    color: colors.muted,
+    textAlign: "center",
+    marginTop: 20,
+  },
+
+  link: {
+    color: colors.primaryPink,
+    fontWeight: "600",
+  },
 });
