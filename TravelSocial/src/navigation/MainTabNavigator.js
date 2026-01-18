@@ -9,6 +9,7 @@ import HomeScreen from "../screens/HomeScreen";
 import TripPlannerScreen from "../screens/TripPlannerScreen";
 import MapScreen from "../screens/MapScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import MessagesListScreen from "../screens/MessagesListScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -77,8 +78,8 @@ export default function MainTabNavigator() {
       />
 
       <Tab.Screen
-        name="Map"
-        component={MapScreen}
+        name="Message"
+        component={MessagesListScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <TabIcon

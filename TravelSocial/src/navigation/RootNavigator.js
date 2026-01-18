@@ -27,7 +27,7 @@ const Stack = createNativeStackNavigator();
 export default function RootNavigator() {
   return (
     <Stack.Navigator
-      initialRouteName="Profile"
+      initialRouteName="Splash"
       screenOptions={{ headerShown: false }}
     >
       {/* ===== SPLASH ===== */}

@@ -1,28 +1,24 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Image,
-  Animated,
-  SafeAreaView,
-  StatusBar,
-  Platform,
-  KeyboardAvoidingView,
+  Alert,
   ScrollView,
+  Platform,
   Dimensions,
 } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { launchImageLibrary } from "react-native-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useNavigation } from "@react-navigation/native";
+import { useTrips } from "../context/TripContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-/* ===== SCREEN SIZE ===== */
 const { width } = Dimensions.get("window");
 
-/* ===== LUXURY COLOR PALETTE ===== */
+/* ===== COLORS ===== */
 const COLORS = {
   bg: "#0B0B14",
   card: "#141526",
@@ -31,178 +27,185 @@ const COLORS = {
   subText: "rgba(255,255,255,0.55)",
   blue: "#6A7CFF",
   pink: "#FF7EB6",
-  gold: "#FFD37A",
-  glowBlue: "rgba(106,124,255,0.25)",
-  success: "#6EE7B7",
+  danger: "#FF6B6B",
 };
 
-const STATUS_BAR_HEIGHT =
-  Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
-
-export default function EditProfileScreen() {
+export default function AddTripScreen() {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { addTrip, updateTrip } = useTrips();
 
-  const [avatar, setAvatar] = useState("https://via.placeholder.com/300");
-  const [name, setName] = useState("Nishant Ahir");
-  const [username, setUsername] = useState("nishantahir");
-  const [location, setLocation] = useState("India");
-  const [bio, setBio] = useState("Exploring cities, roads & real stories");
+  const editingTrip = route.params?.trip;
 
-  /* 🔥 DATE STATE */
-  const [date, setDate] = useState(null);
-  const [showPicker, setShowPicker] = useState(false);
+  /* ===== STATES ===== */
+  const [title, setTitle] = useState(editingTrip?.title || "");
+  const [from, setFrom] = useState(editingTrip?.from || "");
+  const [to, setTo] = useState(editingTrip?.to || "");
 
-  const [saved, setSaved] = useState(false);
-  const successAnim = useRef(new Animated.Value(0)).current;
+  const [startDate, setStartDate] = useState(
+    editingTrip?.startDate ? new Date(editingTrip.startDate) : null
+  );
+  const [endDate, setEndDate] = useState(
+    editingTrip?.endDate ? new Date(editingTrip.endDate) : null
+  );
 
-  /* IMAGE PICKER */
-  const pickImage = () => {
-    launchImageLibrary({ mediaType: "photo", quality: 0.85 }, (res) => {
-      if (res?.assets?.[0]?.uri) {
-        setAvatar(res.assets[0].uri);
-      }
-    });
-  };
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
 
-  /* DATE CHANGE */
-  const onDateChange = (_, selectedDate) => {
-    setShowPicker(false);
-    if (selectedDate) {
-      setDate(selectedDate);
+  /* ===== FORMAT DATE ===== */
+  const formatDate = (date) =>
+    date ? date.toISOString().split("T")[0] : "";
+
+  /* ===== VALIDATION ===== */
+  const validate = () => {
+    if (!title.trim()) {
+      Alert.alert("Validation", "Trip title is required");
+      return false;
     }
+    if (!from.trim() || !to.trim()) {
+      Alert.alert("Validation", "From and To locations are required");
+      return false;
+    }
+    if (!startDate) {
+      Alert.alert("Validation", "Start date is required");
+      return false;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (startDate < today) {
+      Alert.alert("Validation", "Start date cannot be in the past");
+      return false;
+    }
+
+    if (endDate && endDate < startDate) {
+      Alert.alert("Validation", "End date cannot be before start date");
+      return false;
+    }
+
+    return true;
   };
 
-  /* SAVE */
+  /* ===== SAVE ===== */
   const onSave = () => {
-    setSaved(true);
-    Animated.timing(successAnim, {
-      toValue: 1,
-      duration: 280,
-      useNativeDriver: true,
-    }).start();
+    if (!validate()) return;
 
-    setTimeout(() => {
-      navigation.replace("Profile");
-    }, 600);
+    const tripData = {
+      id: editingTrip?.id || Date.now().toString(),
+      title,
+      from,
+      to,
+      startDate: formatDate(startDate),
+      endDate: endDate ? formatDate(endDate) : null,
+      status: "Ongoing",
+    };
+
+    editingTrip ? updateTrip(tripData) : addTrip(tripData);
+    navigation.goBack();
   };
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
-
-      {/* HEADER */}
+      {/* ===== HEADER ===== */}
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.iconCircle}
-          onPress={() => navigation.replace("Profile")}
+          style={styles.iconBtn}
+          onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={18} color={COLORS.text} />
+          <Ionicons name="arrow-back" size={20} color={COLORS.text} />
         </TouchableOpacity>
 
-        <Text style={styles.headerTitle}>Edit Profile</Text>
+        <Text style={styles.headerTitle}>
+          {editingTrip ? "Edit Trip" : "Add Trip"}
+        </Text>
 
         <TouchableOpacity onPress={onSave}>
-          <Text style={styles.saveText}>Save</Text>
+          <Text style={styles.saveHeaderText}>Save</Text>
         </TouchableOpacity>
       </View>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={STATUS_BAR_HEIGHT + 64}
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ paddingBottom: 40 }}
-        >
-          {/* SUCCESS */}
-          {saved && (
-            <Animated.View
-              style={[
-                styles.successBar,
-                {
-                  opacity: successAnim,
-                  transform: [
-                    {
-                      translateY: successAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [-8, 0],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            >
-              <Ionicons name="checkmark-circle" size={16} color={COLORS.success} />
-              <Text style={styles.successText}>Profile updated successfully</Text>
-            </Animated.View>
-          )}
+        <Field label="Trip Title" value={title} onChange={setTitle} />
+        <Field label="From" value={from} onChange={setFrom} />
+        <Field label="To" value={to} onChange={setTo} />
 
-          {/* AVATAR */}
-          <View style={styles.avatarWrap}>
-            <View style={styles.avatarGlow}>
-              <View style={styles.avatarBorder}>
-                <Image source={{ uri: avatar }} style={styles.avatar} />
-              </View>
-            </View>
+        <DateField
+          label="Start Date"
+          value={startDate}
+          onPress={() => setShowStartPicker(true)}
+        />
 
-            <TouchableOpacity style={styles.changePhotoBtn} onPress={pickImage}>
-              <Ionicons name="camera-outline" size={18} color={COLORS.subText} />
-              <Text style={styles.changePhotoText}>Change photo</Text>
-            </TouchableOpacity>
-          </View>
+        <DateField
+          label="End Date (Optional)"
+          value={endDate}
+          onPress={() => setShowEndPicker(true)}
+        />
+      </ScrollView>
 
-          {/* INPUTS */}
-          <Field label="Name" value={name} onChange={setName} />
-          <Field label="Username" value={username} onChange={setUsername} />
-          <Field label="Location" value={location} onChange={setLocation} />
+      {/* DATE PICKERS */}
+      {showStartPicker && (
+        <DateTimePicker
+          value={startDate || new Date()}
+          mode="date"
+          minimumDate={new Date()}
+          display={Platform.OS === "ios" ? "spinner" : "default"}
+          onChange={(e, date) => {
+            setShowStartPicker(false);
+            if (date) setStartDate(date);
+          }}
+        />
+      )}
 
-          {/* DATE PICKER FIELD */}
-          <TouchableOpacity onPress={() => setShowPicker(true)} style={styles.field}>
-            <Text style={styles.label}>Select Date</Text>
-            <View style={styles.dateBox}>
-              <Text style={styles.dateText}>
-                {date ? date.toDateString() : "Choose date"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          {showPicker && (
-            <DateTimePicker
-              value={date || new Date()}
-              mode="date"
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              minimumDate={new Date()} // ❌ past date disabled
-              onChange={onDateChange}
-            />
-          )}
-
-          <Field
-            label="Bio (optional)"
-            value={bio}
-            onChange={setBio}
-            multiline
-            height={110}
-          />
-        </ScrollView>
-      </KeyboardAvoidingView>
+      {showEndPicker && (
+        <DateTimePicker
+          value={endDate || startDate || new Date()}
+          minimumDate={startDate || new Date()}
+          mode="date"
+          display={Platform.OS === "ios" ? "spinner" : "default"}
+          onChange={(e, date) => {
+            setShowEndPicker(false);
+            if (date) setEndDate(date);
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }
 
-/* ===== FIELD ===== */
-const Field = ({ label, value, onChange, multiline, height }) => (
+/* ===== INPUT FIELD ===== */
+const Field = ({ label, value, onChange }) => (
   <View style={styles.field}>
     <Text style={styles.label}>{label}</Text>
     <TextInput
       value={value}
       onChangeText={onChange}
-      multiline={multiline}
-      textAlignVertical={multiline ? "top" : "center"}
-      style={[styles.input, multiline && { height: height || 100 }]}
+      style={styles.input}
       placeholderTextColor={COLORS.subText}
     />
+  </View>
+);
+
+/* ===== DATE FIELD ===== */
+const DateField = ({ label, value, onPress }) => (
+  <View style={styles.field}>
+    <Text style={styles.label}>{label}</Text>
+    <TouchableOpacity style={styles.input} onPress={onPress}>
+      <Text style={{ color: value ? COLORS.text : COLORS.subText }}>
+        {value ? value.toISOString().split("T")[0] : "Select date"}
+      </Text>
+      <Ionicons
+        name="calendar-outline"
+        size={18}
+        color={COLORS.subText}
+        style={styles.calendarIcon}
+      />
+    </TouchableOpacity>
   </View>
 );
 
@@ -211,69 +214,53 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: COLORS.bg },
 
   header: {
-    height: 64 + STATUS_BAR_HEIGHT,
-    paddingTop: STATUS_BAR_HEIGHT,
-    paddingHorizontal: width * 0.04,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderBottomWidth: 0.6,
     borderBottomColor: COLORS.border,
   },
 
-  headerTitle: { fontSize: width > 360 ? 17 : 16, fontWeight: "600", color: COLORS.text },
-  saveText: { fontSize: 15, fontWeight: "600", color: COLORS.pink },
-
-  iconCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    borderWidth: 0.8,
-    borderColor: COLORS.border,
+  iconBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
   },
 
-  successBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: "rgba(110,231,183,0.08)",
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: COLORS.text,
   },
 
-  successText: { fontSize: 13, color: COLORS.success },
+  saveHeaderText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: COLORS.blue,
+  },
 
-  avatarWrap: { alignItems: "center", marginVertical: 26 },
-  avatarGlow: { shadowColor: COLORS.glowBlue, shadowOpacity: 0.35, shadowRadius: 24, elevation: 18 },
-  avatarBorder: { borderRadius: 70, borderWidth: 1, borderColor: COLORS.blue },
-  avatar: { width: 110, height: 110, borderRadius: 55 },
+  container: { flex: 1 },
+  content: { padding: 16 },
 
-  changePhotoBtn: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 14 },
-  changePhotoText: { fontSize: 14, color: COLORS.subText },
-
-  field: { marginHorizontal: width * 0.04, marginBottom: 18 },
-  label: { fontSize: 13, marginBottom: 6, color: COLORS.subText },
+  field: { marginBottom: 18 },
+  label: { color: COLORS.subText, marginBottom: 6 },
 
   input: {
     backgroundColor: COLORS.card,
-    borderRadius: 16,
-    paddingHorizontal: 16,
+    borderRadius: 14,
+    paddingHorizontal: 14,
     paddingVertical: 14,
-    fontSize: 15,
     color: COLORS.text,
     borderWidth: 0.6,
     borderColor: COLORS.border,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 
-  dateBox: {
-    backgroundColor: COLORS.card,
-    borderRadius: 16,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderWidth: 0.6,
-    borderColor: COLORS.border,
-  },
-
-  dateText: { fontSize: 14, color: COLORS.text },
+  calendarIcon: { marginLeft: 8 },
 });

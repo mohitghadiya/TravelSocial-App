@@ -34,7 +34,7 @@ export default function UpcomingScreen() {
   /* 🔁 AUTO COMPLETE */
   useEffect(() => {
     const today = new Date();
-    trips.forEach(trip => {
+    trips.forEach(trip => { 
       if (trip.endDate && trip.status !== "Completed") {
         if (today > new Date(trip.endDate)) {
           completeTrip(trip.id);

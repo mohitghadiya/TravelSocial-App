@@ -488,7 +488,7 @@ export default function OtpScreen({ route, navigation }) {
   };
 
   /* ================= RESEND OTP ================= */
-  const handleResend = () => {
+  const handleResend = () => {  
     setOtp(["", "", "", ""]);
     setSeconds(30);
     setCanResend(false);
